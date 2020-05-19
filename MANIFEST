@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/kg-Elections.t
+lib/kg/Elections.pm

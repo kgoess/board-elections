@@ -1,0 +1,6 @@
+Revision history for Perl extension kg::Elections.
+
+0.01  Tue May 19 04:15:01 2020
+	- original version; created by h2xs 1.23 with options
+		-X kg::Elections
+
