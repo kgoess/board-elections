@@ -85,15 +85,17 @@ sub record_vote {
     my ($self, %p) = @_;
 
     my $election_id = $p{election_id} or croak "missing election_id";
-    my $voter_name = $p{voter_name} or croak "missing voter_name";
+    my $voter_name = $p{voter_name};
+    my $voter_sha1 = $p{voter_sha1};
+    ($voter_name || $voter_sha1) or croak "either voter_name or voter_sha1 required in record_vote";
     my $vote = $p{vote} or croak "missing vote";
 
-    my $voter_sha1 = sha1_base64($voter_name);
+    $voter_sha1 ||= sha1_base64($voter_name);
 
     my $election = kg::Elections::Model::Election->load($election_id)
         or croak "no election found for id $election_id";
 
-    my $votes_recorded = $self->num_votes_recorded;
+    my $votes_recorded = $self->get_num_votes_recorded;
 
     if ($votes_recorded >= $election->num_allowed) {
         croak "no more votes allowed for '".$election->name."' on ".$election->election_date;
@@ -109,7 +111,7 @@ sub record_vote {
     return wantarray ? ($voter_sha1, $vote_obj->id) : $voter_sha1;
 }
 
-sub num_votes_recorded {
+sub get_num_votes_recorded {
     my ($self) = @_;
 
     return kg::Elections::Model::Vote->votes_for_election($self->id);

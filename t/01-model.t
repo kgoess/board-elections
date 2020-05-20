@@ -1,6 +1,6 @@
 
 use strict;
-use Test::More tests => 9;
+use Test::More tests => 10;
 use Test::Exception;
 
 use kg::Elections::Model::Election;
@@ -9,6 +9,8 @@ use kg::Elections::Model::Vote;
 
 $ENV{SQLITE_FILE} = 'elections-test';
 unlink $ENV{SQLITE_FILE};
+
+$ENV{DBI_PRINT_ERROR} = 0;
 
 kg::Elections::Model::Election->create_table;
 kg::Elections::Model::Vote->create_table;
@@ -87,6 +89,8 @@ sub test_record_vote {
 
     $v = kg::Elections::Model::Vote->load($vote_id);
     is $v->vote, 'no';
+
+    is $e->get_num_votes_recorded, 2;
 
     throws_ok {
         $e->record_vote(

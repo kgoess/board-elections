@@ -18,6 +18,7 @@ sub get_dbh {
 
     $_dbh ||= DBI->connect("dbi:SQLite:dbname=$dbfile","","", {
         RaiseError => 1,
+        PrintError => $ENV{DBI_PRINT_ERROR} // 1,
     });
 
     return $_dbh;
