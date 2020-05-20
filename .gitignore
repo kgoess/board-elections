@@ -1,0 +1,7 @@
+*.swp
+MYMETA.json
+MYMETA.yml
+Makefile
+blib/
+elections-test
+pm_to_blib
