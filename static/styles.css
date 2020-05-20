@@ -1,15 +1,63 @@
 
 body {
-    /*
-    color: #C00000;
-    background: #ffd0ff;
-    */
     font-family: Verdana,Arial,sans-serif;
-    margin: 80px;
-    max-width: 70em;
-    border: 1px solid black;
-    padding: 20px;
 }
+
+
+/* main, container, text-header, body-text are arranged so that
+  "BACDS Zoom Elections" intersects the border
+   from https://stackoverflow.com/a/31680386
+*/
+.main {
+    width: 1000px;
+    height: 100%;
+    margin-left: 40px;
+    margin-top: 20px;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    padding-top: 40px;
+}
+
+.text-header {
+    color: white;
+    text-align: center;
+    top: 60px;
+    width: 210px;
+    left: 100px;
+    position: absolute;
+    background: white;
+}
+
+.body-text {
+    margin: 10px;
+    text-align: left;
+    padding: 30px 20px 80px 50px;
+    border: 2px solid black;
+}
+
+.election-name {
+  display: block;
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.voting-step-name {
+  display: block;
+  font-size: 1.17em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
 
 form {
     padding: 10px;
@@ -35,4 +83,4 @@ form div {
 .card div {
     margin: 10px;
 }
-    
+

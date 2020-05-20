@@ -12,11 +12,11 @@
 [% END %]
 
 
+<div class="message">
+    Successfully created election <b>'[% name %]'</b> for [% election_date %].
+</div>
 <div class="card">
     <div>
-        Successfully created election <b>'[% name %]'</b> for [% election_date %].
-    </div>
-    <div class="message">
         The url for this election is:
         <div>
             <a href="[% voting_url %]">[% voting_url %]</a>

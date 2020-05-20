@@ -8,16 +8,20 @@
 
 <link rel="stylesheet" type="text/css" href="[% static_uri_for('styles.css') %]" />
 
+<style>
+</style>
+
 
 </head>
 <body>
 
-<div id="page-header">
-    <div id="site-title">
-        <a href="[% uri_for( path => '/' ) %]">BACDS ELECTIONS </a>
-    </div>
-    <div id="page-header">
-        [% election_name %]
-    </div>
-</div>
+<div class="main">
+    <div class="container">
+        <div class="text-header">
+            <a href="[% uri_for( path => '/' ) %]">BACDS Zoom Elections</a>
+        </div>
+        <div class="body-text">
+            <div class="election-name">
+                [% election_name %]
+            </div>
 
