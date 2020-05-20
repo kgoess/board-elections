@@ -1,6 +1,6 @@
 
 use strict;
-use Test::More tests => 10;
+use Test::More tests => 12;
 use Test::Exception;
 
 use kg::Elections::Model::Election;
@@ -22,7 +22,7 @@ test_record_vote();
 sub test_elections_crud {
     my $e = kg::Elections::Model::Election->new(
         name => 'test election',
-        election_date => '2020-05-01',        
+        election_date => '2020-05-01',
         num_allowed => 5,
     );
 
@@ -33,11 +33,18 @@ sub test_elections_crud {
     is $e2->name, 'test election';
     is $e2->election_date, '2020-05-01';
 
+    my $uuid = Data::UUID->new;
+
+    ok $uuid->from_string($e2->xid);
+
     $e2->name('test XXXX');
     $e2->save;
 
     my $e3 = kg::Elections::Model::Election->load($e->id);
     is $e3->name, 'test XXXX';
+
+    my $e4 = kg::Elections::Model::Election->load_by_xid($e3->xid);
+    is $e4->name, 'test XXXX';
 }
 
 sub test_votes_crud {
@@ -59,7 +66,7 @@ sub test_votes_crud {
 sub test_record_vote {
     my $e = kg::Elections::Model::Election->new(
         name => 'test election',
-        election_date => '2020-05-01',        
+        election_date => '2020-05-01',
         num_allowed => 2,
     );
     $e->save;

@@ -118,9 +118,15 @@ sub uri_for {
         %p = @_;
     }
 
+
     my $path = delete $p{path} || '/';
 
-    my $base = $ENV{GOC_URI_BASE} or die "GOC_URI_BASE is unset in ENV";
+    my $base;
+    if ($p{with_host}) {
+        $base = $ENV{SCRIPT_URI}; # we'll see if this works
+    } else {
+        $base = $ENV{ELECTIONS_URI_BASE} or die "ELECTIONS_URI_BASE is unset in ENV";
+    }
 
     my $url_params = '';
     if (keys %p) {
@@ -136,9 +142,9 @@ sub uri_for {
 sub static_uri_for {
     my ($path) = @_;
 
-    my $base = $ENV{GOC_STATIC_URI_BASE} or die "GOC_STATIC_URI_BASE is unset in ENV";
+    my $base = $ENV{ELECTIONS_STATIC_URI_BASE} or die "ELECTIONS_STATIC_URI_BASE is unset in ENV";
 
-    return "$ENV{GOC_STATIC_URI_BASE}/$path";
+    return "$ENV{ELECTIONS_STATIC_URI_BASE}/$path";
 }
 
 1;

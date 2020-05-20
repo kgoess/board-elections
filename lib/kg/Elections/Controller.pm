@@ -14,9 +14,10 @@ use Data::Dump qw/dump/;
 #use kg::Elections::Utils qw/uri_escape/;
 
 my %handler_for_path = (
-    ''               => sub { shift->main_page(@_) },
-    '/'              => sub { shift->main_page(@_) },
-#    '/admin/logs'    => sub { shift->activity_logs(@_) },
+    ''                  => sub { shift->main_page(@_) },
+    '/'                 => sub { shift->main_page(@_) },
+    '/create-election'  => sub { shift->create_election(@_) },
+    '/election-created' => sub { shift->election_created(@_) },
 );
 
 sub go {
@@ -46,43 +47,93 @@ sub import {
     *static_uri_for = \&{$static_uri_for_implementation};
 }
 
-#sub login_page {
-#    my ($class, %p) = @_;
-#
-#    if ($p{method} eq 'GET') {
-#        return {
-#            action => 'display',
-#            content => kg::Elections::View->login_page(
-#                request      => $p{request},
-#            ),
-#        }
-#
-#    } elsif ($p{method} eq 'POST') {
-#        my $id = scalar($p{request}->param('login_id'))
-#            or die "missing login_id";
-#
-#        my $person = kg::Elections::Model::Person->load($id)
-#            or die "no user found for id $id";;
-#
-#         my $cookie = CGI::Cookie->new(
-#            -name  => 'Berkmo-GoC',
-#            -value => "user_id:$id",
-#            -expires => '+3M',
-#         );
-#
-#        kg::Elections::Logger->new(current_user => $person)->debug("logged in");
-#        return {
-#            action => 'redirect',
-#            headers => {
-#                Location  => uri_for(path => "/"),
-#            },
-#            cookie => $cookie,
-#        };
-#    } else {
-#        die "unrecognized method $p{method} in call to login_page";
-#    }
-#
-#}
+sub create_election {
+    my ($class, %p) = @_;
+
+    if ($p{method} eq 'GET') {
+        return {
+            action => 'display',
+            content => kg::Elections::View->create_election(
+                request      => $p{request},
+            ),
+        }
+
+    } elsif ($p{method} eq 'POST') {
+
+        my @errors;
+
+       foreach my $f (qw/name election-date num-allowed/) {
+            if (! scalar($p{request}->param($f))) {
+                push @errors, "missing data for $f";
+            }
+        }
+
+        if (my $election_date = scalar($p{request}->param('election-date'))) {
+            if ($election_date !~ /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) {
+                push @errors, "date should be formatted YYYY-MM-DD, not '$election_date'";
+            }
+        }
+        if (my $num_allowed = scalar($p{request}->param('num_allowed'))) {
+            if ($num_allowed =~ /[^0-9]/) {
+                push @errors, "num_allowed should be a number, not '$num_allowed'";
+            }
+        }
+
+        if (@errors) {
+            return {
+                action => 'display',
+                content => kg::Elections::View->create_election(
+                    errors       => \@errors,
+                    request      => $p{request},
+                ),
+            }
+        }
+
+            my $election = kg::Elections::Model::Election->new(
+                name          => scalar($p{request}->param('name')),
+                election_date => scalar($p{request}->param('election-date')),
+                num_allowed   => scalar($p{request}->param('num-allowed')),
+            );
+            $election->save;
+
+            my $xid= $election->xid;
+
+        return {
+            action => 'redirect',
+            headers => {
+                Location  => uri_for(
+                    path => "/election-created",
+                    xid => $xid,
+                ),
+            },
+            debug => {
+                election => $election,
+            },
+        };
+    } else {
+        die "unrecognized method $p{method} in call to login_page";
+    }
+}
+
+sub election_created {
+    my ($class, %p) = @_;
+
+    if ($p{method} eq 'GET') {
+        my @errors;
+        my $xid = scalar($p{request}->param('xid')) or die "missing xid parameter";
+        my $election = kg::Elections::Model::Election->load_by_xid($xid)
+            or do { push @errors, "no election found for xid $xid" };
+
+        return {
+            action => 'display',
+            content => kg::Elections::View->election_created(
+                request => $p{request},
+                election => $election,
+                (@errors ? (errors => \@errors) : ()),
+            ),
+        }
+    }
+}
 
 
 1;

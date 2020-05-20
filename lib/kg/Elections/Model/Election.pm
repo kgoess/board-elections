@@ -5,21 +5,30 @@ use 5.14.0;
 use warnings;
 
 use Carp qw/croak/;
+use Data::UUID;
 use Digest::SHA1  qw(sha1_base64);
 
 use kg::Elections::Utils qw/get_dbh/;
 use kg::Elections::Model::Vote;
 
 use Class::Accessor::Lite(
-    new => 1,
     rw  => [
         'id',  # the db primary key
+		'xid', # a uuid
         'name',
         'election_date',
         'num_allowed',
         'deleted',
     ],
 );
+
+sub new {
+	my ($class, %p) = @_;
+
+	$p{xid} ||= Data::UUID->new->create_str();
+
+	return bless \%p, $class;
+}
 
 sub save {
     my ($self) = @_;
@@ -31,18 +40,19 @@ sub save {
     my $sql = <<EOL;
     INSERT INTO elections (
         name,
+		xid,
         election_date,
         num_allowed,
         deleted
     )
-    VALUES (?,?,?,?);
+    VALUES (?,?,?,?,?);
 EOL
 
     my $deleted = $self->deleted // 0;
 
     my $dbh = get_dbh();
     my $sth = $dbh->prepare($sql);
-    $sth->execute((map { $self->$_ } qw/name election_date num_allowed /), $deleted);
+    $sth->execute((map { $self->$_ } qw/name xid election_date num_allowed /), $deleted);
 
     $self->id($dbh->sqlite_last_insert_rowid);
 }
@@ -74,6 +84,23 @@ sub load {
     my $dbh = get_dbh();
     my $sth = $dbh->prepare($sql);
     $sth->execute($id);
+    if (my $row = $sth->fetchrow_hashref) {
+        return bless $row, $class;
+    } else {
+        return;
+    }
+}
+
+sub load_by_xid {
+    my ($class, $xid) = @_;
+
+    croak "missing id in call to $class->load" unless $xid;
+
+    my $sql = 'SELECT * FROM elections WHERE xid = ?';
+
+    my $dbh = get_dbh();
+    my $sth = $dbh->prepare($sql);
+    $sth->execute($xid);
     if (my $row = $sth->fetchrow_hashref) {
         return bless $row, $class;
     } else {
@@ -124,6 +151,7 @@ sub create_table {
     my $sql = <<EOL;
 CREATE TABLE elections (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+	xid VARCHAR(36),
     name VARCHAR(255) NOT NULL,
     election_date DATE(255) NOT NULL,
     num_allowed INT NOT NULL,
@@ -136,6 +164,12 @@ EOL
     $sql = <<EOL;
 CREATE UNIQUE INDEX election_name_date 
 ON elections (name, election_date);
+EOL
+    $sth = $dbh->prepare($sql);
+    $sth->execute;
+    $sql = <<EOL;
+CREATE INDEX election_xid
+ON elections (xid);
 EOL
     $sth = $dbh->prepare($sql);
     $sth->execute;

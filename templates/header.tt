@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>The [% organization_name %] Election Counter</title>
+
+<link rel="stylesheet" type="text/css" href="[% static_uri_for('styles.css') %]" />
+
+
+</head>
+<body>
+
+<div id="page-header">
+    <div id="site-title">
+        <a href="[% uri_for( path => '/' ) %]">BACDS ELECTIONS </a>
+    </div>
+    <div id="page-header">
+        [% election_name %]
+    </div>
+</div>
+

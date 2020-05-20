@@ -1,0 +1,28 @@
+
+[% IF errors %]
+    <div class="errors">
+[% errors.0 %]
+        <ul>
+        [% FOR error IN errors %]
+            <li>[% error | html %]
+        [% END %]
+        </ul>
+
+    </div>
+[% END %]
+
+
+<div class="card">
+    <div>
+        Successfully created election <b>'[% name %]'</b> for [% election_date %].
+    </div>
+    <div class="message">
+        The url for this election is:
+        <div>
+            <a href="[% voting_url %]">[% voting_url %]</a>
+        </div>
+    </div>
+    <div>
+        You should share that url with your [% num_voters %] voters.
+    </div>
+</div>

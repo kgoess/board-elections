@@ -1,0 +1,30 @@
+
+[% IF errors %]
+    <div class="errors">
+        <ul>
+        [% FOR error IN errors %]
+            <li>[% error | html %]
+        [% END %]
+        </ul>
+
+    </div>
+[% END %]
+
+
+<form method="POST" action="[% uri_for( path => "/create-election" ) %]">
+    <div>
+        Election Name:
+        <input type="text" name="name" size="50">
+    </div>
+    <div>
+        Election Date (yyyy-mm-dd):
+        <input type="text" name="election-date" size="50">
+    </div>
+    <div>
+        Number of voters:
+        <input type="text" name="num-allowed" size="10">
+    </div>
+    <div>
+        <input type="submit">
+    </div>
+</form>
