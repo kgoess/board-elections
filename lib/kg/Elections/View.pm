@@ -50,26 +50,26 @@ sub create_election {
 }
 
 sub election_created {
-	my ($class, %p) = @_;
+    my ($class, %p) = @_;
 
-	my $tt = get_tt();
+    my $tt = get_tt();
 
     my $template = 'election-created.tt';
 
-	my $voting_url = uri_for(
-		with_host => 1,
-		path => '/vote-start',
-		xid => $p{election}->xid,
-	);
-		
+    my $voting_url = uri_for(
+        with_host => 1,
+        path => '/vote-start',
+        xid => $p{election}->xid,
+    );
+
     my $vars = get_vars(
         \%p,
         organization_name => 'BACDS',
         errors => $p{errors},
-		name => $p{election}->name,
-		election_date => $p{election}->election_date,
-		num_voters => $p{election}->num_allowed,
-		voting_url => $voting_url,
+        name => $p{election}->name,
+        election_date => $p{election}->election_date,
+        num_voters => $p{election}->num_allowed,
+        voting_url => $voting_url,
 
     );
     my $output = '';
@@ -79,7 +79,32 @@ sub election_created {
 
     return $output;
 }
-	
+
+sub vote_start {
+    my ($class, %p) = @_;
+
+    my $tt = get_tt();
+
+    my $template = 'vote-start.tt';
+    my $vars = get_vars(
+        \%p,
+        organization_name => 'BACDS',
+        errors => $p{errors},
+        name => $p{election}->name,
+        election_date => $p{election}->election_date,
+        election_name => $p{election}->name,
+        #num_voters => $p{election}->num_allowed,
+        election_xid => $p{election}->xid,
+
+
+    );
+    my $output = '';
+
+    $tt->process($template, $vars, \$output)
+           || die $tt->error();
+
+    return $output;
+}
 
 
 my $_tt;
