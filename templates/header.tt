@@ -21,7 +21,10 @@
             <a href="[% uri_for( path => '/' ) %]">BACDS Zoom Elections</a>
         </div>
         <div class="body-text">
-            <div class="election-name">
+            <span class="election-name xxx">
                 [% election_name %]
-            </div>
+            </span>
+            <span class="election-date">
+                [% election_date %]
+            </span>
 

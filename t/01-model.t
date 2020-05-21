@@ -51,7 +51,7 @@ sub test_votes_crud {
 
     my $v = kg::Elections::Model::Vote->new(
         election_id => 123,
-        voter_sha1 => 'alice',
+        voter => 'alice',
         vote => 'yes'
     );
 
@@ -59,7 +59,7 @@ sub test_votes_crud {
 
     my $v2 = kg::Elections::Model::Vote->load($v->id);
 
-    is $v2->voter_sha1, 'alice';
+    is $v2->voter, 'alice';
     is $v2->vote, 'yes';
 }
 
@@ -73,8 +73,7 @@ sub test_record_vote {
 
 
     my ($sha1, $vote_id) = $e->record_vote(
-        election_id => $e->id,
-        voter_name => 'alice',
+        voter => 'alice',
         vote => 'yes'
     );
     my $v = kg::Elections::Model::Vote->load($vote_id);
@@ -82,15 +81,13 @@ sub test_record_vote {
 
     throws_ok {
         $e->record_vote(
-            election_id => $e->id,
-            voter_name => 'alice',
+            voter => 'alice',
             vote => 'yes'
         );
-    } qr/UNIQUE constraint failed: votes.election_id, votes.voter_sha1/;
+    } qr/UNIQUE constraint failed: votes.election_id, votes.voter/;
 
     ($sha1, $vote_id) = $e->record_vote(
-        election_id => $e->id,
-        voter_name => 'bob',
+        voter => 'bob',
         vote => 'no'
     );
 
@@ -101,8 +98,7 @@ sub test_record_vote {
 
     throws_ok {
         $e->record_vote(
-            election_id => $e->id,
-            voter_name => 'alice',
+            voter => 'alice',
             vote => 'yes'
         );
     } qr/no more votes allowed for 'test election' on 2020-05-01/;

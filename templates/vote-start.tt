@@ -11,15 +11,17 @@
     </div>
 [% END %]
 
-<div class="voting-step-name">
-Voting, Step 1
-</div>
-<form method="POST" action="[% uri_for( path => "/vote-start" ) %]">
+<form method="POST" action="[% uri_for( path => "/record-vote" ) %]">
     <div>
-        Enter your name, email, or some other unique identifier about yourself:<br>
-        <input type="text" name="voter-name" size="50">
+        <!-- This is your voting key: [% voter %]<br> -->
     </div>
     <div>
+        Enter your vote here and hit 'submit':<br>
+        <input type="text" name="vote" size="50">
+
+    </div>
+    <div>
+        <input type="hidden" name="voter" value="[% voter %]">
         <input type="hidden" name="election-xid" value="[% election_xid %]">
         <input type="submit">
     </div>

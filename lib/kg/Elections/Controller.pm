@@ -20,6 +20,8 @@ my %handler_for_path = (
     '/create-election'  => sub { shift->create_election(@_) },
     '/election-created' => sub { shift->election_created(@_) },
     '/vote-start'       => sub { shift->vote_start(@_) },
+    '/record-vote'      => sub { shift->record_vote(@_) },
+    '/watch-election'   => sub { shift->watch_election(@_) },
 );
 
 sub go {
@@ -184,6 +186,105 @@ sub vote_start {
                 request => $p{request},
                 election => $election,
                 (@errors ? (errors => \@errors) : ()),
+            ),
+        }
+    } else {
+        die "unrecognized method $p{method} in call to vote_start";
+    }
+}
+sub record_vote {
+    my ($class, %p) = @_;
+
+    if ($p{method} eq 'POST') {
+        my @errors;
+        foreach my $f (qw/voter vote election-xid/) {
+            if (! scalar($p{request}->param($f))) {
+                push @errors, "missing data for $f";
+            }
+        }
+        my $xid = scalar($p{request}->param('election-xid'));
+        my $election = kg::Elections::Model::Election->load_by_xid($xid)
+            or do { push @errors, "no election found for xid $xid" };
+
+        my $voter = scalar($p{request}->param('voter'));
+        my $vote = scalar($p{request}->param('vote'));
+
+        eval {
+            $election->record_vote(
+                voter => $voter,
+                vote => $vote,
+            );
+        };
+        if ($@) {
+            push @errors, "record_vote failed: $@";
+        }
+# TODO test this error path
+        if (@errors) {
+            return {
+                action => 'display',
+                content => kg::Elections::View->vote_start(
+                    method       => 'GET',
+                    errors       => \@errors,
+                    request      => $p{request},
+                ),
+            }
+        }
+
+        return {
+            action => 'redirect',
+            headers => {
+                Location  => uri_for(
+                    path => "/watch-election",
+                    xid => $xid,
+                    voter => $voter,
+                ),
+            },
+        }
+    } else {
+        die "unrecognized method $p{method} in call to vote_start";
+    }
+}
+
+sub watch_election {
+    my ($class, %p) = @_;
+
+    # FIXME do something to *not* have the voter in the url--cookie?
+    if ($p{method} eq 'GET') {
+        my @errors;
+        foreach my $f (qw/voter xid/) {
+            if (! scalar($p{request}->param($f))) {
+                push @errors, "missing data for $f";
+            }
+        }
+        my $xid = scalar($p{request}->param('xid'));
+        my $election = kg::Elections::Model::Election->load_by_xid($xid)
+            or do { push @errors, "no election found for xid $xid" };
+
+        my $voter = scalar($p{request}->param('voter'));
+
+        my $votes_recorded = $election->get_num_votes_recorded;
+        my $num_allowed = $election->num_allowed;
+
+        my @votes;
+        if ($votes_recorded > $num_allowed) {
+            push @errors, "too many votes for recorded! election is disallowed!";
+        } elsif ($votes_recorded < $num_allowed) {
+            # nothing to do?
+        } elsif ($votes_recorded == $num_allowed) {
+            @votes = $election->get_all_votes_recorded;
+        }
+
+
+        return {
+            action => 'display',
+            content => kg::Elections::View->watch_election(
+                request => $p{request},
+                election => $election,
+                voter => $voter,
+                (@errors ? (errors => \@errors) : ()),
+                votes_recorded => $votes_recorded,
+                num_allowed => $num_allowed,
+                (@votes ? (votes => \@votes) : ()),
             ),
         }
     } else {

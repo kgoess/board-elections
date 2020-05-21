@@ -5,6 +5,7 @@ use warnings;
 
 use Carp qw/croak/;
 use Data::Dump qw/dump/;
+use Data::UUID;
 use Template;
 use JSON();
 
@@ -95,8 +96,43 @@ sub vote_start {
         election_name => $p{election}->name,
         #num_voters => $p{election}->num_allowed,
         election_xid => $p{election}->xid,
+		voter => Data::UUID->new->create_str(),
 
 
+    );
+    my $output = '';
+
+    $tt->process($template, $vars, \$output)
+           || die $tt->error();
+
+    return $output;
+}
+
+sub watch_election {
+    my ($class, %p) = @_;
+
+    my $tt = get_tt();
+
+	my @votes;
+	if ($p{votes}) {
+		@votes = @{$p{votes}};
+		@votes = sort { $a->vote cmp $b->vote } @votes;
+	}
+
+    my $template = 'watch-election.tt';
+    my $vars = get_vars(
+        \%p,
+        organization_name => 'BACDS',
+        errors => $p{errors},
+        name => $p{election}->name,
+        election_date => $p{election}->election_date,
+        election_name => $p{election}->name,
+        #num_voters => $p{election}->num_allowed,
+        election_xid => $p{election}->xid,
+		votes_recorded => $p{votes_recorded},
+		num_allowed => $p{num_allowed},
+		(@votes ? (votes => \@votes) : ()),
+		voter => $p{voter},
     );
     my $output = '';
 
