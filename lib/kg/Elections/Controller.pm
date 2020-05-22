@@ -15,8 +15,8 @@ use Digest::SHA1  qw(sha1_base64);
 #use kg::Elections::Utils qw/uri_escape/;
 
 my %handler_for_path = (
-    ''                  => sub { shift->main_page(@_) },
-    '/'                 => sub { shift->main_page(@_) },
+    ''  => sub { shift->create_election(@_) },
+    '/'  => sub { shift->create_election(@_) },
     '/create-election'  => sub { shift->create_election(@_) },
     '/election-created' => sub { shift->election_created(@_) },
     '/vote-start'       => sub { shift->vote_start(@_) },
