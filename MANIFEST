@@ -2,5 +2,6 @@ Changes
 Makefile.PL
 MANIFEST
 README
-t/kg-Elections.t
+t/01-model.t
+t/02-Controller.t
 lib/kg/Elections.pm

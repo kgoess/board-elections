@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use CGI;
+use URI::Escape qw/uri_escape/;
 
 use kg::Elections::Controller 'kg::Elections::Controller::CGI';
 use kg::Elections::View 'kg::Elections::Controller::CGI';
@@ -109,7 +110,6 @@ sub get_path_info {
 }
 
     
-# TODO need to worry about escaping here?
 sub uri_for {
     my %p;
     if (ref $_[0] eq 'HASH') { # TT sends a hashref
@@ -131,7 +131,8 @@ sub uri_for {
     my $url_params = '';
     if (keys %p) {
         $url_params = '&'; # will also be different for mod_perl
-        $url_params .= join '&', map { "$_=$p{$_}" } sort keys %p;
+        $url_params .= join '&', map { "$_=".uri_escape($p{$_}) } sort keys %p;
+
     }
 
 
