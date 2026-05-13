@@ -14,20 +14,24 @@ votes are in for that meeting they'll see the results.
 
 ![Meeting Creation](/doc/elections-1.png)
 
-![Initial Voting Page](/doc/elections-2.png)
+![Election Created](/doc/elections-2.png)
 
-![Vote Cast Page](/doc/elections-3.png)
+![Initial Voting Page](/doc/elections-3.png)
 
-![Voting Complete Page](/doc/elections-4.png)
+![Vote Cast Page](/doc/elections-4.png)
+
+![Voting Complete Page](/doc/elections-5.png)
 
 INSTALLATION
 
 To install this module type the following:
 
+```
    perl Makefile.PL
    make
    make test
    make install
+```
 
 COPYRIGHT AND LICENCE
 
