@@ -1,37 +1,5 @@
-package kg::Elections;
-
-use 5.026003;
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
-
-
-# Preloaded methods go here.
-
-# Autoload methods go after =cut, and are processed by the autosplit program.
-
-1;
-__END__
-
-=head1 NAME
-
-kg::Elections - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-In elections.cgi:
-
-    $ENV{SQLITE_FILE} = '/var/lib/elections/db/elections.sqlite';
-    $ENV{TT_INCLUDE_PATH} = '/var/lib/elections/templates';
-    $ENV{ELECTIONS_URI_BASE} = '/cgi-bin/elections.cgi';
-    $ENV{ELECTIONS_STATIC_URI_BASE} = '/elections-static/';
-
-    use kg::Elections::Controller::CGI;
-
-    kg::Elections::Controller::CGI->handler;
-
-=head1 DESCRIPTION
+kg-Elections version 0.01
+=========================
 
 This was a quick cheap-and-easy way to set up anonymous voting for Zoom
 meetings when we moved online at the beginning of the pandemic.
@@ -44,20 +12,31 @@ round of ballots was compromised you can just create a new meeting. Each voter
 can refresh their screen to see the progress of the voting, and when all the
 votes are in for that meeting they'll see the results.
 
-See screenshots in doc/ or the README.md
+![Meeting Creation](/doc/elections-1.png)
 
+![Initial Voting Page](/doc/elections-2.png)
 
-=head1 AUTHOR
+![Vote Cast Page](/doc/elections-3.png)
 
-Kevin M. Goess <cpan@goess.org>
+![Voting Complete Page](/doc/elections-4.png)
 
-=head1 COPYRIGHT AND LICENSE
+INSTALLATION
 
-Copyright (C) 2020 by Kevin M. Goess
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+COPYRIGHT AND LICENCE
+
+Put the correct copyright and licence information here.
+
+Copyright (C) 2020 by Kevin M. Goess <cpan@goess.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.26.3 or,
 at your option, any later version of Perl 5 you may have available.
 
 
-=cut

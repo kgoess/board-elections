@@ -5,9 +5,20 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'kg::Elections',
     VERSION_FROM      => 'lib/kg/Elections.pm', # finds $VERSION, requires EU::MM from perl >= 5.5
-    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
+    PREREQ_PM         => {
+        'CGI'                   => 0,
+        'CGI::Cookie'           => 0,
+        'Class::Accessor::Lite' => 0,
+        'Data::Dump'            => 0,
+        'Data::UUID'            => 0,
+        'DBI'                   => 0,
+        'Digest::SHA1'          => 0,
+        'JSON'                  => 0,
+        'Template'              => 0,
+        'URI::Escape'           => 0,
+    },
     ABSTRACT_FROM     => 'lib/kg/Elections.pm', # retrieve abstract from module
-    AUTHOR            => 'A. U. Thor <kevin@localdomain>',
+    AUTHOR            => 'Kevin M. Goess <cpan@goess.org>',
     #LICENSE           => 'perl',
     #Value must be from legacy list of licenses here
     #http://search.cpan.org/perldoc?Module%3A%3ABuild%3A%3AAPI
